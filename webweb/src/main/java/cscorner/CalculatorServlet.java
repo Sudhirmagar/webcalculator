@@ -23,17 +23,17 @@ public class CalculatorServlet extends HttpServlet {
 		      return; 
 		    }
 
-		    String postfix = infixToPostfix(input); 
-		    int result = evaluatePostfix(postfix); 
+		    String prefix = infixToPrefix(input); 
+		    int result = evaluatePrefix(prefix); 
 
 		    request.setAttribute("result", result);
 		    request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 
-	 private int evaluatePostfix(String postfix) {
+	 private int evaluatePrefix(String prefix) {
 		    Stack<Integer> stack = new Stack<Integer>();
-		    for (int i = 0; i < postfix.length(); i++) {
-		      char c = postfix.charAt(i);
+		    for (int i = 0; i < prefix.length(); i++) {
+		      char c = prefix.charAt(i);
 		      if (Character.isDigit(c)) {
 		        stack.push(c - '0');
 		      } else {
@@ -60,31 +60,31 @@ public class CalculatorServlet extends HttpServlet {
 		    return stack.pop();
 		  }
 
-		  private String infixToPostfix(String infix) {
-		    StringBuilder postfix = new StringBuilder();
+		  private String infixToPrefix(String infix) {
+		    StringBuilder prefix = new StringBuilder();
 		    Stack<Character> stack = new Stack<Character>();
 		    for (int i = 0; i < infix.length(); i++) {
 		      char c = infix.charAt(i);
 		      if (Character.isDigit(c)) {
-		        postfix.append(c);
+		        prefix.append(c);
 		      } else if (c == '+' || c == '-' || c == '*' || c == '/') {
 		        while (!stack.isEmpty() && precedence(stack.peek()) >= precedence(c)) {
-		          postfix.append(stack.pop());
+		          prefix.append(stack.pop());
 		        }
 		        stack.push(c);
 		      } else if (c == '(') {
 		        stack.push(c);
 		      } else if (c == ')') {
 		        while (!stack.isEmpty() && stack.peek() != '(') {
-		          postfix.append(stack.pop());
+		          prefix.append(stack.pop());
 		        }
 		        stack.pop();
 		      }
 		    }
 		    while (!stack.isEmpty()) {
-		      postfix.append(stack.pop());
+		      prefix.append(stack.pop());
 		    }
-		    return postfix.toString();
+		    return prefix.toString();
 		  }
 
 		  private int precedence(char operator) {
